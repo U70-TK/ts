@@ -1,4 +1,4 @@
-package tartan.test.java.UT;;
+package tartan.test.java.UT;
 
 import java.util.Map;
 import java.lang.StringBuffer;
