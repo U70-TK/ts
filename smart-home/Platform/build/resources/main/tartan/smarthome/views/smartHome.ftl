@@ -7,6 +7,7 @@ See -->
     <title>Tartan House Control Panel</title>
     <script type="text/javascript">
         $(document).ready(function() {
+            var lockStateChangeRequested = false;
 
              $("#refresh_button").click(function() {
                 window.location.reload();
@@ -21,8 +22,12 @@ See -->
                 var armAlarm = $('#armAlarm').val();
                 var passcode = $('#alarmPasscode').val();
                 var hvacMode = $('#hvacMode').val();
+                var lock = $('#lock').val();
+                var lockPasscode = $('#lockPasscode').val();
+                var lockStateChangeRequested = lockStateChangeRequested;
 
-                return JSON.stringify({"door":door,"light":light,"targetTemp":targetTemp,"humidifier":humidifier,"alarmArmed":armAlarm,"alarmDelay":alarmDelay,"alarmPasscode":passcode});
+
+                return JSON.stringify({"door":door,"light":light,"targetTemp":targetTemp,"humidifier":humidifier,"alarmArmed":armAlarm,"alarmDelay":alarmDelay,"alarmPasscode":passcode, "lock":lock,"lockPasscode":lockPasscode, "lockStateChangeRequested": lockStateChangeRequested});
             }
 
             // Auto scroll
@@ -59,6 +64,43 @@ See -->
                     },
                 });
             });
+
+            $("#lock_button").click(function(){
+                lockStateChangeRequested = true;
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url:  '/smarthome/update/${tartanHome.name}',
+                    data: updateState(),
+                    success: function(data) {
+                        lockStateChangeRequested = false;
+                        location.reload(true);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        lockStateChangeRequested = false;
+                        alert("Could not change lock state for ${tartanHome.name}");
+                    },
+                });
+            });
+
+            $("#unlock_button").click(function(){
+                lockStateChangeRequested = true;
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url:  '/smarthome/update/${tartanHome.name}',
+                    data: updateState(),
+                    success: function(data) {
+                        lockStateChangeRequested = false;
+                        location.reload(true);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        lockStateChangeRequested = false;
+                        alert("Could not change lock state for ${tartanHome.name}");
+                    },
+                });
+            });
+
         });
 </script>
 </head>
@@ -182,6 +224,23 @@ div {
             Alarm delay: <input id="alarmDelay" type="number" value="${tartanHome.alarmDelay}" /> seconds
         </strong>
     </p>
+
+    <hr>
+    <h3>Smart Lock</h3>
+    <p>
+        <#if tartanHome.lock == "off">
+            <strong><font color="green">Lock Off</font></strong>
+        <#else>
+            <strong><font color="red">Lock On</font></strong>
+        </#if>
+        <label for="lockPasscode">Lock passcode: </label><input id="lockPasscode" type="text" />
+        <#if tartanHome.lock == "off">
+            <button id="lock_button">Lock</button>
+        <#else>
+            <button id="unlock_button">Unlock</button>
+        </#if>
+    </p>
+
     <hr>
     <h3> Event log</h3>
     <textarea id="log" rows="15" cols="150">

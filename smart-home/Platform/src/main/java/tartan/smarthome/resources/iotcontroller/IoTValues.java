@@ -66,4 +66,21 @@ public abstract class IoTValues {
     public static final String SETTINGS_FILE = "settings.txt";
     public static final String USERS_DB = "users.txt";
 	public static final String AWAY_TIMER = "AW";
+
+    public static final String LOCK_ON = "1";
+    public static final String LOCK_OFF = "0";
+
+    public static final String PHONE_HOME = "1";
+    public static final String PHONE_AWAY = "0";
+
+    public static final String CHANGE_REQUESTED = "1";
+    public static final String CHANGE_UNREQUESTED = "0";
+
+    public static final String INTRUDER_DETECTED = "1";
+    public static final String INTRUDER_UNDETECTED = "0";
+
+    public static final String PHONE_PROXIMITY_STATE = "FPS";
+    public static final String INTRUDER_STATE = "IS";
+    public static final String LOCK_STATE = "LOS";
+    public static final String LOCK_STATE_CHANGE_REQUESTED = "LSCR";
 }

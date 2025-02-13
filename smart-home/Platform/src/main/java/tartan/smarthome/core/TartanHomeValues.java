@@ -23,4 +23,13 @@ public abstract class TartanHomeValues {
     public static final String INACTIVE = "inactive";
 
     public static final String UNKNOWN = "UNKNOWN";
+
+    public static final String HOME = "home";
+    public static final String AWAY = "away";
+
+    public static final String REQUESTED = "requested";
+    public static final String UNREQUESTED = "unrequested";
+
+    public static final String DETECTED = "detected";
+    public static final String UNDETECTED = "undetected";
 }

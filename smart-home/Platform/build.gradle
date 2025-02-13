@@ -10,8 +10,8 @@ apply plugin: 'application'
 application {
     mainClass = 'tartan.smarthome.TartanHomeApplication'
 }
-sourceCompatibility = 21
-targetCompatibility = 21
+//sourceCompatibility = 21
+//targetCompatibility = 21
 repositories {
     mavenLocal()
     mavenCentral()

@@ -74,6 +74,22 @@ public class TartanHomeData {
     @Column(name = "alarm_enabled_state")
     private String alarmArmed;
 
+    // the smart lock (true if door is locked, false if not)
+    @Column(name = "lock_state")
+    private String lock;
+
+    // the phone proximity state (true if user is at home, false if user is away)
+    @Column(name = "phone")
+    private String phone;
+
+    // the lock state change requested state
+    @Column(name = "lock_state_change_requested_state")
+    private String lockStateChangeRequested;
+
+    // the intruder state (true if intruder detected, false if not)
+    @Column(name = "intruder_state")
+    private String intruderState;
+
     /**
      * Create a mew data set from a TartanHome model
      * @param h the home model
@@ -93,6 +109,10 @@ public class TartanHomeData {
         this.alarmActive = h.getAlarmActive();
         this.alarmDelay = h.getAlarmDelay();
         this.alarmArmed = h.getAlarmArmed();
+        this.lock = h.getLock();
+        this.phone = h.getPhone();
+        this.lockStateChangeRequested = h.getLockStateChangeRequested();
+        this.intruderState = h.getIntruderState();
 
         // Remember when this record is created
         this.createTimeStamp = new Date();
@@ -318,6 +338,63 @@ public class TartanHomeData {
      */
     public void setHvacState(String hvacState) {
         this.hvacState = hvacState;
+    }
+
+    /**
+     * Get the lock state
+     * @return the lock state
+     */
+    public String getLock() { return this.lock; }
+
+    /**
+     * Set the lock state
+     * @param lock the new lock state
+     */
+    public void setLock(String lock) { this.lock = lock; }
+
+
+    /**
+     * Get the phone proximity state
+     * @return the phone proximity state
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * Set the phone proximity state
+     * @param phone the new phone proximity state
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * Get the lock state change requested state
+     * @return the lock state change requested state
+     */
+    public String getLockStateChangeRequested() { return this.lockStateChangeRequested; }
+
+    /**
+     * Set the lock state change requested state
+     * @param lockStateChangeRequested the new lock state change requested state
+     */
+    public void setLockStateChangeRequested(String lockStateChangeRequested) { this.lockStateChangeRequested = lockStateChangeRequested; }
+
+    /**
+     * Get the intruder state
+     * @return the intruder state
+     */
+    public String getIntruderState() {
+        return intruderState;
+    }
+
+    /**
+     * Set the intruder state
+     * @param intruderState the new intruder state
+     */
+    public void setIntruderState(String intruderState) {
+        this.intruderState = intruderState;
     }
 
 

@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages connection to the IoT house
@@ -15,14 +17,15 @@ import java.util.StringTokenizer;
  */
 public class IoTConnectManager {
     // Connection to the house
-    private IoTConnection connection;
+    protected IoTConnection connection;
 
     /**
      * Set up the connection manager with a connection
      * @param conn the (established) connection
      */
-    public IoTConnectManager(IoTConnection conn) {
-        connection = conn;
+
+    public void setIoTconnection(IoTConnection conn) {
+        this.connection = conn;
     }
 
     /**
@@ -42,6 +45,7 @@ public class IoTConnectManager {
 
         synchronized (connection) {
             String update = connection.sendMessageToHouse(IoTValues.GET_STATE + IoTValues.MSG_END);
+            LoggerFactory.getLogger(IoTConnectManager.class).info("TEST" + update);
             if (update == null) {
                 return null;
             }
@@ -169,6 +173,58 @@ public class IoTConnectManager {
                 if (count<keys.size()) {
                     newState.append(IoTValues.PARAM_DELIM);
                 }
+            } else if (key.equals(IoTValues.LOCK_STATE)) {
+                Boolean newLockState = (Boolean) state.get(key);
+                newState.append(IoTValues.LOCK_STATE);
+                newState.append(IoTValues.PARAM_EQ);
+                if (newLockState) {
+                    newState.append(IoTValues.LOCK_ON);
+                } else {
+                    newState.append(IoTValues.LOCK_OFF);
+                }
+                count++;
+                if (count<keys.size()) {
+                    newState.append(IoTValues.PARAM_DELIM);
+                }
+            } else if (key.equals(IoTValues.PHONE_PROXIMITY_STATE)) {
+                Boolean newPhoneProximityState = (Boolean) state.get(key);
+                newState.append(IoTValues.PHONE_PROXIMITY_STATE);
+                newState.append(IoTValues.PARAM_EQ);
+                if (newPhoneProximityState) {
+                    newState.append(IoTValues.PHONE_HOME);
+                } else {
+                    newState.append(IoTValues.PHONE_AWAY);
+                }
+                count++;
+                if (count<keys.size()) {
+                    newState.append(IoTValues.PARAM_DELIM);
+                }
+            } else if (key.equals(IoTValues.LOCK_STATE_CHANGE_REQUESTED)) {
+                Boolean newLockStateChangeRequseted = (Boolean) state.get(key);
+                newState.append(IoTValues.LOCK_STATE_CHANGE_REQUESTED);
+                newState.append(IoTValues.PARAM_EQ);
+                if (newLockStateChangeRequseted) {
+                    newState.append(IoTValues.CHANGE_REQUESTED);
+                } else {
+                    newState.append(IoTValues.CHANGE_UNREQUESTED);
+                }
+                count++;
+                if (count<keys.size()) {
+                    newState.append(IoTValues.PARAM_DELIM);
+                }
+            } else if (key.equals(IoTValues.INTRUDER_STATE)) {
+                Boolean newIntruderState = (Boolean) state.get(key);
+                newState.append(IoTValues.INTRUDER_STATE);
+                newState.append(IoTValues.PARAM_EQ);
+                if (newIntruderState) {
+                    newState.append(IoTValues.INTRUDER_DETECTED);
+                } else {
+                    newState.append(IoTValues.INTRUDER_UNDETECTED);
+                }
+                count++;
+                if (count<keys.size()) {
+                    newState.append(IoTValues.PARAM_DELIM);
+                }
             }
         }
 
@@ -233,65 +289,103 @@ public class IoTConnectManager {
         while (pt.hasMoreTokens()) {
             String param = pt.nextToken();
             String data[] = param.split(IoTValues.PARAM_EQ);
-            Integer val = Integer.parseInt(data[1]);
 
             if (data[0].equals(IoTValues.LIGHT_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.LIGHT_STATE, true);
                 } else {
                     state.put(IoTValues.LIGHT_STATE, false);
                 }
             } else if (data[0].equals(IoTValues.ALARM_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.ALARM_STATE, true);
                 } else {
                 state.put(IoTValues.ALARM_STATE, false);
                 }
             } else if (data[0].equals(IoTValues.DOOR_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.DOOR_STATE, true);
                 } else {
                     state.put(IoTValues.DOOR_STATE, false);
                 }
             }  else if (data[0].equals(IoTValues.HUMIDIFIER_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.HUMIDIFIER_STATE, true);
                 } else {
                     state.put(IoTValues.HUMIDIFIER_STATE, false);
                 }
             } else if (data[0].equals(IoTValues.PROXIMITY_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.PROXIMITY_STATE, true);
                 } else {
                     state.put(IoTValues.PROXIMITY_STATE, false);
                 }
             } else if (data[0].equals(IoTValues.ALARM_ACTIVE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.ALARM_ACTIVE, true);
                 } else {
                     state.put(IoTValues.ALARM_ACTIVE, false);
                 }
             } else if (data[0].equals(IoTValues.HEATER_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.HEATER_STATE, true);
                 } else {
                     state.put(IoTValues.HEATER_STATE, false);
                 }
             } else if (data[0].equals(IoTValues.CHILLER_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.CHILLER_STATE, true);
                 } else {
                     state.put(IoTValues.CHILLER_STATE, false);
                 }
             } else if (data[0].equals(IoTValues.TEMP_READING)) {
+                Integer val = Integer.parseInt(data[1]);
                 state.put(IoTValues.TEMP_READING, val);
             } else if (data[0].equals(IoTValues.HUMIDITY_READING)) {
+                Integer val = Integer.parseInt(data[1]);
                 state.put(IoTValues.HUMIDITY_READING, val);
             } else if (data[0].equals(IoTValues.HVAC_MODE)) {
+                Integer val = Integer.parseInt(data[1]);
                 if (val == 1) {
                     state.put(IoTValues.HVAC_MODE, "Heater");
                 } else {
                     state.put(IoTValues.HVAC_MODE, "Chiller");
+                }
+            } else if (data[0].equals(IoTValues.LOCK_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
+                if (val == 1) {
+                    state.put(IoTValues.LOCK_STATE, true);
+                } else {
+                    state.put(IoTValues.LOCK_STATE, false);
+                }
+            } else if (data[0].equals(IoTValues.PHONE_PROXIMITY_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
+                if (val == 1) {
+                    state.put(IoTValues.PHONE_PROXIMITY_STATE, true);
+                } else {
+                    state.put(IoTValues.PHONE_PROXIMITY_STATE, false);
+                }
+            } else if (data[0].equals(IoTValues.LOCK_STATE_CHANGE_REQUESTED)) {
+                Integer val = Integer.parseInt(data[1]);
+                if (val == 1) {
+                    state.put(IoTValues.LOCK_STATE_CHANGE_REQUESTED, true);
+                } else {
+                    state.put(IoTValues.LOCK_STATE_CHANGE_REQUESTED, false);
+                }
+            } else if (data[0].equals(IoTValues.INTRUDER_STATE)) {
+                Integer val = Integer.parseInt(data[1]);
+                if (val == 1) {
+                    state.put(IoTValues.INTRUDER_STATE, true);
+                } else {
+                    state.put(IoTValues.INTRUDER_STATE, false);
                 }
             }
         }

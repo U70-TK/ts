@@ -66,6 +66,22 @@ public class TartanHome {
     @JsonProperty
     private String alarmArmed;
 
+    // the state of lock
+    @JsonProperty
+    private String lock;
+
+    // the state of phone proximity state
+    @JsonProperty
+    private String phone;
+
+    // the lock state change requested state
+    @JsonProperty
+    private String lockStateChangeRequested;
+
+    // the intruder state
+    @JsonProperty
+    private String intruderState;
+
     // Properties that are not part of the historical record
     @JsonProperty
     private List<String> eventLog;
@@ -303,6 +319,60 @@ public class TartanHome {
     public void setHvacState(String hvacState) {
         this.hvacState = hvacState;
     }
+
+    /**
+     * Get the lock state
+     * @return the lock state
+     */
+    public String getLock() { return this.lock; }
+
+    /**
+     * Set the lock state
+     * @param lock the new lock state
+     */
+    public void setLock(String lock) { this.lock = lock; }
+
+    /**
+     * Get the phone state
+     * @return the phone state
+     */
+    public String getPhone() { return this.phone; }
+
+    /**
+     * Set the phone state
+     * @param set the phone state
+     */
+    public void setPhone(String phone) { this.phone = phone; }
+
+    /**
+     * Get the lock state change requested state
+     * @return the lock state change requested state
+     */
+    public String getLockStateChangeRequested() { return this.lockStateChangeRequested; }
+
+    /**
+     * Set the lock state change requested state
+     * @param set the lock state change requested state
+     */
+    public void setLockStateChangeRequested(String lockStateChangeRequested) { this.lockStateChangeRequested = lockStateChangeRequested; }
+
+
+    /**
+     * Get the intruder state
+     * @return the intruder state
+     */
+    public String getIntruderState() {
+        return intruderState;
+    }
+
+    /**
+     * Set the intruder state
+     * @param the intruder state
+     */
+    public void setIntruderState(String intruderState) {
+        this.intruderState = intruderState;
+    }
+
 
     /**
      * Get the house event log

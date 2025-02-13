@@ -28,6 +28,10 @@ class HouseState(object):
       self.__temperature = 65
       self.__humidity = 90
       self.__hvac_mode = HEATER
+      self.__lock = False
+      self.__phone = True
+      self.__lock_state_change_requested = False
+      self.__intruder_state = False
 
       self.__param = ";"
       self.__end = "."
@@ -82,6 +86,18 @@ class HouseState(object):
          elif k == "HM":
             if v == "1": self.__hvac_mode = HEATER
             else: self.__hvac_mode = CHILLER
+         elif k == "LOS":
+            if v == "1": self.__lock = True
+            else: self.__lock = False
+         elif k == "FPS":
+            if v == "1": self.__phone = True
+            else: self.__phone = False
+         elif k == "LSCR":
+            if v == "1": self.__lock_state_change_requested = True
+            else: self.__lock_state_change_requested = False
+         elif k == "IS":
+            if v == "1": self.__intruder_state = True
+            else: self.__intruder_state = False
 
    # Getters and setters for house properties
    def get_temperature(self): return self.__temperature
@@ -133,11 +149,31 @@ class HouseState(object):
       if self.__dehumidifier: return "1"
       return "0"
 
+   def set_lock(self, l): self.__lock = l
+   def get_lock(self):
+      if self.__lock: return "1"
+      return "0"
+
+   def set_phone(self, p): self.__phone = p
+   def get_phone(self):
+      if self.__phone: return "1"
+      return "0"
+
+   def set_lock_state_change_requested(self, l): self.__lock_state_change_requested = l
+   def get_lock_state_change_requested(self):
+      if self.__lock_state_change_requested: return "1"
+      return "0"
+
+   def set_intruder_state(self, i): self.__intruder_state = i
+   def get_intruder_state(self):
+      if self.__intruder_state: return "1"
+      return "0"
+
    def get_state(self):
       '''
       Handle get state requests
       '''
-      return "TR={0};HR={1};DS={2};LS={3};PS={4};AS={5};AA={6};HES={7};CHS={8};HM={9};HUS={10}".format(self.get_temperature(),
+      return "TR={0};HR={1};DS={2};LS={3};PS={4};AS={5};AA={6};HES={7};CHS={8};HM={9};HUS={10};LOS={11};FPS={12};LSCR={13};IS={14}".format(self.get_temperature(),
                                                                                                self.get_humidity(),
                                                                                                self.get_door(),
                                                                                                self.get_light(),
@@ -147,7 +183,11 @@ class HouseState(object):
                                                                                                self.get_heater_state(),
                                                                                                self.get_chiller_state(),
                                                                                                self.get_hvac_mode(),
-                                                                                               self.get_dehumidifier())
+                                                                                               self.get_dehumidifier(),
+                                                                                               self.get_lock(),
+                                                                                               self.get_phone(),
+                                                                                               self.get_lock_state_change_requested(),
+                                                                                               self.get_intruder_state())
 house = HouseState()
 
 class UserThread(threading.Thread):
@@ -190,6 +230,22 @@ class UserThread(threading.Thread):
             if house.get_proximity() == "1": house.set_proximity(False)
             else: house.set_proximity(True)
             print ("proximity is now {}".format(house.get_proximity()))
+         elif cmd == "lo":
+            if house.get_lock() == "1": house.set_lock(False)
+            else: house.set_lock(True)
+            print ("lock is now {}".format(house.get_lock()))
+         elif cmd == "pp":
+            if house.get_phone() == "1": house.set_phone(False)
+            else: house.set_phone(True)
+            print ("phone proximity is now {}".format(house.get_phone()))
+         elif cmd == "lscr":
+            if house.get_lock_state_change_requested() == "1": house.set_lock_state_change_requested(False)
+            else: house.set_lock_state_change_requested(True)
+            print ("lock state change requested is now {}".format(house.get_lock_state_change_requested()))
+         elif cmd == "i":
+            if house.get_intruder_state() == "1": house.set_intruder_state(False)
+            else: house.set_intruder_state(True)
+            print ("intruder state is now {}".format(house.get_intruder_state()))
 
       return
 

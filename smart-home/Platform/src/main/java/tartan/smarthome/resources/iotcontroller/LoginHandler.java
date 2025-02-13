@@ -13,7 +13,7 @@ import java.util.Vector;
 public class LoginHandler {
 
     /** the number of unsuccessful login attempts */
-    private int times;
+    public int times;
 
     /** the list of valid users */
     Vector<UserLoginInfo> validUsers;

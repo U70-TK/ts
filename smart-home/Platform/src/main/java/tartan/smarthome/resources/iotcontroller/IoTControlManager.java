@@ -3,6 +3,7 @@ package tartan.smarthome.resources.iotcontroller;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.slf4j.LoggerFactory;
 
 import tartan.smarthome.resources.TartanStateEvaluator;
 
@@ -47,7 +48,7 @@ public class IoTControlManager {
      * @param user     the user name
      * @param password the password
      */
-    public IoTControlManager(String user, String password, TartanStateEvaluator evaluator) {
+    public IoTControlManager(String user, String password, TartanStateEvaluator evaluator, IoTConnectManager connMgr) {
 
         logMessages = new Vector<String>();
 
@@ -61,7 +62,7 @@ public class IoTControlManager {
 
         loginHandler = new LoginHandler(this.users);
 
-        connMgr = null;
+        this.connMgr = connMgr;
 
         lastState = new Hashtable<>();
     }
@@ -179,6 +180,8 @@ public class IoTControlManager {
                 return null;
             }
             lastState = connMgr.getState();
+            LoggerFactory.getLogger(IoTControlManager.class).info("TEST" + lastState);
+
         }
 
         // The away timer is controlled here
@@ -266,7 +269,7 @@ public class IoTControlManager {
 
         IoTConnection conn = new IoTConnection(houseAddress, housePort);
         conn.connect();
-        connMgr = new IoTConnectManager(conn);
+        this.connMgr.setIoTconnection(conn);
 
         if (connMgr.isConnected()) {
             startHouseUpdateThread();

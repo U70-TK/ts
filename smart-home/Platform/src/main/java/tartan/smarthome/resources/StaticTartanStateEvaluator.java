@@ -45,6 +45,10 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         String hvacSetting = null; // the HVAC mode setting, either Heater or Chiller
         String givenPassCode = "";
 
+        Boolean phoneProximityState = false;
+        Boolean intruderState = false;
+        Boolean lockState = false;
+
         System.out.println("Evaluating new state statically");
 
         Set<String> keys = inState.keySet();
@@ -81,6 +85,12 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 awayTimerState = (Boolean) inState.getOrDefault(key, false);
              } else if (key.equals(IoTValues.ALARM_ACTIVE)) {
                 alarmActiveState = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.PHONE_PROXIMITY_STATE)) {
+                phoneProximityState = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.INTRUDER_STATE)) {
+                intruderState = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.LOCK_STATE)) {
+                lockState = (Boolean) inState.get(key);
             }
         }
 
@@ -264,6 +274,14 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             humidifierState = false;
         }
 
+
+        if (phoneProximityState && !intruderState) {
+            lockState = false;
+            log.append(formatLogEntry("Door unlocked"));
+        } else if (intruderState) {
+            log.append(formatLogEntry("Intruder is nearby. Cannot lock the door. "));
+        }
+
         Map<String, Object> newState = new Hashtable<>();
         newState.put(IoTValues.DOOR_STATE, doorState);
         newState.put(IoTValues.AWAY_TIMER, awayTimerState);
@@ -277,6 +295,9 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         newState.put(IoTValues.HVAC_MODE, hvacSetting);
         newState.put(IoTValues.ALARM_PASSCODE, alarmPassCode);
         newState.put(IoTValues.GIVEN_PASSCODE, givenPassCode);
+        newState.put(IoTValues.LOCK_STATE, lockState);
+        newState.put(IoTValues.PHONE_PROXIMITY_STATE, phoneProximityState);
+        newState.put(IoTValues.INTRUDER_STATE, intruderState);
         
         return newState; 
     }

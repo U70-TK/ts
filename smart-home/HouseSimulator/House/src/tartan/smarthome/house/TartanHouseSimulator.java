@@ -29,6 +29,10 @@ public class TartanHouseSimulator implements Runnable {
     private Boolean chillerOnState; // the chiller state (true if on, false if off)
     private Boolean alarmActiveState; // the alarm active state (true if alarm sounding, false if alarm not sounding)
     private String  hvacMode; // the HVAC mode setting, either Heater or Chiller
+    private Boolean lockState; // the state of lock (true if on, false if off)
+    private Boolean phoneProximityState; // the state of phone proximity (true if phone is close to house, false if is not)
+    private Boolean lockStateChangeRequested; // the state of lock state change requested (true if is yes, false if is no)
+    private Boolean intruderState; // the intruder state (true if intruder detected, false if not)
 
     /** connection settings */
     private String address = null;
@@ -54,6 +58,10 @@ public class TartanHouseSimulator implements Runnable {
     private final String HEATER_STATE = "HES";
     private final String CHILLER_STATE = "CHS";
     private final String PASSCODE = "PC";
+    private final String LOCK_STATE = "LOS";
+    private final String PHONE_PROXIMITY_STATE = "FPS";
+    private final String LOCK_STATE_CHANGE_REQUESTED = "LSCR";
+    private final String INTRUDER_STATE = "IS";
 
     // protocol control values
     private final String PARAM_DELIM = ";";
@@ -82,6 +90,18 @@ public class TartanHouseSimulator implements Runnable {
     private final String CHILLER_ON = "1";
     private final String CHILLER_OFF = "0";
 
+    private final String LOCK_ON = "1";
+    private final String LOCK_OFF = "0";
+
+    private final String PHONE_HOME = "1";
+    private final String PHONE_AWAY = "0";
+
+    private final String CHANGE_REQUESTED = "1";
+    private final String CHANGE_UNREQUESTED = "0";
+
+    private final String INTRUDER_DETECTED = "1";
+    private final String INTRUDER_UNDETECTED = "0";
+
     private final String OK = "OK";
 
     private final String ALARM_DELAY = "ALARM_DELAY";
@@ -90,6 +110,7 @@ public class TartanHouseSimulator implements Runnable {
     private final String GET_STATE = "GS";
     private final String SET_STATE = "SS";
     private final String STATE_UPDATE = "SU";
+
 
     /**
      * Get connection state
@@ -289,6 +310,58 @@ public class TartanHouseSimulator implements Runnable {
                 if (count < keys.size()) {
                     newState.append(PARAM_DELIM);
                 }
+            } else if (key.equals(LOCK_STATE)) {
+                Boolean newlockstate = (Boolean) state.get(key);
+                newState.append(LOCK_STATE);
+                newState.append(PARAM_EQ);
+                if (newlockstate) {
+                    newState.append(LOCK_ON);
+                } else {
+                    newState.append(LOCK_OFF);
+                }
+                count++;
+                if (count < keys.size()) {
+                    newState.append(PARAM_DELIM);
+                }
+            } else if (key.equals(PHONE_PROXIMITY_STATE)) {
+                Boolean newPhoneProxState = (Boolean) state.get(key);
+                newState.append(PHONE_PROXIMITY_STATE);
+                newState.append(PARAM_EQ);
+                if (newPhoneProxState) {
+                    newState.append(PHONE_HOME);
+                } else {
+                    newState.append(PHONE_AWAY);
+                }
+                count++;
+                if (count < keys.size()) {
+                    newState.append(PARAM_DELIM);
+                }
+            } else if (key.equals(LOCK_STATE_CHANGE_REQUESTED)) {
+                Boolean newLockChangeRequested = (Boolean) state.get(key);
+                newState.append(LOCK_STATE_CHANGE_REQUESTED);
+                newState.append(PARAM_EQ);
+                if (newLockChangeRequested) {
+                    newState.append(CHANGE_REQUESTED);
+                } else {
+                    newState.append(CHANGE_UNREQUESTED);
+                }
+                count++;
+                if (count < keys.size()) {
+                    newState.append(PARAM_DELIM);
+                }
+            } else if (key.equals(INTRUDER_STATE)) {
+                Boolean newIntruderState = (Boolean) state.get(key);
+                newState.append(INTRUDER_STATE);
+                newState.append(PARAM_EQ);
+                if (newIntruderState) {
+                    newState.append(INTRUDER_DETECTED);
+                } else {
+                    newState.append(INTRUDER_UNDETECTED);
+                }
+                count++;
+                if (count<keys.size()) {
+                    newState.append(PARAM_DELIM);
+                }
             }
         }
 
@@ -349,59 +422,96 @@ public class TartanHouseSimulator implements Runnable {
             while (pt.hasMoreTokens()) {
                 String param = pt.nextToken();
                 String data[] = param.split(PARAM_EQ);
-                Integer val = Integer.parseInt(data[1]);
 
                 if (data[0].equals(LIGHT_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(LIGHT_STATE, true);
                     } else {
                         state.put(LIGHT_STATE, false);
                     }
                 } else if (data[0].equals(ALARM_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(ALARM_STATE, true);
                     } else {
                         state.put(ALARM_STATE, false);
                     }
                 } else if (data[0].equals(DOOR_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(DOOR_STATE, true);
                     } else {
                         state.put(DOOR_STATE, false);
                     }
                 } else if (data[0].equals(HUMIDIFIER_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(HUMIDIFIER_STATE, true);
                     } else {
                         state.put(HUMIDIFIER_STATE, false);
                     }
                 } else if (data[0].equals(PROXIMITY_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(PROXIMITY_STATE, true);
                     } else {
                         state.put(PROXIMITY_STATE, false);
                     }
                 } else if (data[0].equals(HEATER_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(HEATER_ON, true);
                     } else {
                         state.put(HEATER_OFF, false);
                     }
                 } else if (data[0].equals(CHILLER_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(CHILLER_ON, true);
                     } else {
                         state.put(CHILLER_OFF, false);
                     }
                 } else if (data[0].equals(TEMP_READING)) {
+                    Integer val = Integer.parseInt(data[1]);
                     state.put(TEMP_READING, val);
                 } else if (data[0].equals(HUMIDITY_READING)) {
+                    Integer val = Integer.parseInt(data[1]);
                     state.put(HUMIDITY_READING, val);
                 } else if (data[0].equals(HVAC_MODE)) {
+                    Integer val = Integer.parseInt(data[1]);
                     if (val == 1) {
                         state.put(HVAC_MODE, "Heater");
                     } else {
                         state.put(HVAC_MODE, "Chiller");
+                    }
+                } else if (data[0].equals(LOCK_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
+                    if (val == 1) {
+                        state.put(LOCK_STATE, true);
+                    } else {
+                        state.put(LOCK_STATE, false);
+                    }
+                } else if (data[0].equals(PHONE_PROXIMITY_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
+                    if (val == 1) {
+                        state.put(PHONE_PROXIMITY_STATE, true);
+                    } else {
+                        state.put(PHONE_PROXIMITY_STATE, false);
+                    }
+                } else if (data[0].equals(LOCK_STATE_CHANGE_REQUESTED)) {
+                    Integer val = Integer.parseInt(data[1]);
+                    if (val == 1) {
+                        state.put(LOCK_STATE_CHANGE_REQUESTED, true);
+                    } else {
+                        state.put(LOCK_STATE_CHANGE_REQUESTED, false);
+                    }
+                } else if (data[0].equals(INTRUDER_STATE)) {
+                    Integer val = Integer.parseInt(data[1]);
+                    if (val == 1) {
+                        state.put(INTRUDER_STATE, true);
+                    } else {
+                        state.put(INTRUDER_STATE, false);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package tartan.smarthome.resources;
 
 import tartan.smarthome.resources.iotcontroller.IoTControlManager;
+import tartan.smarthome.resources.iotcontroller.IoTConnectManager;
 import tartan.smarthome.resources.iotcontroller.IoTValues;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class TartanHomeService {
         this.logHistory = true;
 
         // Create and initialize the controller for this house
-        this.controller = new IoTControlManager(user, password, new StaticTartanStateEvaluator());
+        this.controller = new IoTControlManager(user, password, new StaticTartanStateEvaluator(), new IoTConnectManager());
         
         TartanHome temp = new TartanHome();
         temp.setAlarmDelay(alarmDelay);
@@ -298,6 +299,51 @@ public class TartanHomeService {
     }
 
     /**
+     * Convert lock state
+     * @param tartanHome the home
+     * @return true if on; false if off; otherwise null
+     */
+    private Boolean toIoTLockState(TartanHome tartanHome) {
+        if (tartanHome.getLock().equals(TartanHomeValues.OFF)) return false;
+        else if (tartanHome.getLock().equals(TartanHomeValues.ON)) return true;
+        return null;
+    }
+
+    /**
+     * Convert phone state
+     * @param tartanHome the home
+     * @return true if owner is home; false if owner is away. Else null
+     */
+    private Boolean toIoTPhoneState(TartanHome tartanHome) {
+        if (tartanHome.getPhone().equals(TartanHomeValues.HOME)) return true;
+        else if (tartanHome.getPhone().equals(TartanHomeValues.AWAY)) return false;
+        return null;
+    }
+
+
+    /**
+     * Convert lock state change requested state
+     * @param tartanHome the home
+     * @return true if is true; false if is false; otherwise null
+     */
+    private Boolean toIoTLockStateChangeRequestedState(TartanHome tartanHome) {
+        if (tartanHome.getLockStateChangeRequested().equals(TartanHomeValues.UNREQUESTED)) return false;
+        else if (tartanHome.getLockStateChangeRequested().equals(TartanHomeValues.REQUESTED)) return true;
+        return null;
+    }
+
+    /**
+     * Convert intruder State
+     * @param tartanHome the home
+     * @return true if intruder detected; false if intruder not detected; otherwise null
+     */
+    private Boolean toIoTIntruderState(TartanHome tartanHome) {
+        if (tartanHome.getIntruderState().equals(TartanHomeValues.DETECTED)) return true;
+        else if (tartanHome.getIntruderState().equals(TartanHomeValues.UNDETECTED)) return false;
+        return null;
+    }
+
+    /**
      * Set the house state in the hardware
      * @param h the new state
      * @return true
@@ -360,6 +406,10 @@ public class TartanHomeService {
             tartanHome.setAlarmActive(TartanHomeValues.UNKNOWN);
             tartanHome.setHvacMode(TartanHomeValues.UNKNOWN);
             tartanHome.setHvacState(TartanHomeValues.UNKNOWN);
+            tartanHome.setLock(TartanHomeValues.UNKNOWN);
+            tartanHome.setPhone(TartanHomeValues.UNKNOWN);
+            tartanHome.setLockStateChangeRequested(TartanHomeValues.UNKNOWN);
+            tartanHome.setIntruderState(TartanHomeValues.UNKNOWN);
 
             return tartanHome;
         }
@@ -438,6 +488,34 @@ public class TartanHomeService {
                 } else {
                     tartanHome.setHvacState(TartanHomeValues.OFF);
                 }
+            } else if (key.equals(IoTValues.LOCK_STATE)) {
+                Boolean lockState = (Boolean)state.get(key);
+                if (lockState) {
+                    tartanHome.setLock(TartanHomeValues.ON);
+                } else {
+                    tartanHome.setLock(TartanHomeValues.OFF);
+                }
+            } else if (key.equals(IoTValues.PHONE_PROXIMITY_STATE)) {
+                Boolean phoneState = (Boolean)state.get(key);
+                if (phoneState) {
+                    tartanHome.setPhone(TartanHomeValues.HOME);
+                } else {
+                    tartanHome.setPhone(TartanHomeValues.AWAY);
+                }
+            } else if (key.equals(IoTValues.LOCK_STATE_CHANGE_REQUESTED)) {
+                Boolean lockStateChangeRequested = (Boolean)state.get(key);
+                if (lockStateChangeRequested) {
+                    tartanHome.setLockStateChangeRequested(TartanHomeValues.REQUESTED);
+                } else {
+                    tartanHome.setLockStateChangeRequested(TartanHomeValues.UNREQUESTED);
+                }
+            } else if (key.equals(IoTValues.INTRUDER_STATE)) {
+                Boolean intruderState = (Boolean)state.get(key);
+                if (intruderState) {
+                    tartanHome.setIntruderState(TartanHomeValues.DETECTED);
+                } else {
+                    tartanHome.setIntruderState(TartanHomeValues.UNDETECTED);
+                }
             }
         }
         
@@ -503,6 +581,18 @@ public class TartanHomeService {
                     }
                 }
             }
+        }
+
+        if (tartanHome.getLock()!=null) {
+            state.put(IoTValues.LOCK_STATE, toIoTLockState(tartanHome));
+        }
+
+        if (tartanHome.getPhone()!=null) {
+            state.put(IoTValues.PHONE_PROXIMITY_STATE, toIoTPhoneState(tartanHome));
+        }
+
+        if (tartanHome.getIntruderState()!=null) {
+            state.put(IoTValues.INTRUDER_STATE, toIoTIntruderState(tartanHome));
         }
         
         for (Map.Entry<String,Object> e : state.entrySet()) {

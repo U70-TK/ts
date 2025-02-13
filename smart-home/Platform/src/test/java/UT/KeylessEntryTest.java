@@ -87,6 +87,6 @@ class UT_KeylessEntry {
         Boolean newLockState = (Boolean) newState.get(IoTValues.LOCK_STATE);
 
         assertTrue(newLockState, "The door should be locked if there is an intruder");
-        assertTrue(log.toString().contains("Intruder is near by. Cannot lock door"), "The system should notify the owner via logs");
+        assertTrue(log.toString().contains("Intruder is nearby. Cannot lock the door"), "The system should notify the owner via logs");
     }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="RulesetThreeTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-02-13T14:24:09" hostname="WTKUAN" time="0.021">
+<testsuite name="RulesetThreeTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-02-13T15:56:16" hostname="WTKUAN" time="0.007">
   <properties/>
-  <testcase name="testAwayTimerTriggeredWhenHouseVacant()" classname="RulesetThreeTest" time="0.003"/>
-  <testcase name="testHouseOccupiedAndLightOff()" classname="RulesetThreeTest" time="0.003"/>
-  <testcase name="testDoorClosedWithHouseOccupied()" classname="RulesetThreeTest" time="0.003"/>
-  <testcase name="testEdgeCaseExtremeTemperature()" classname="RulesetThreeTest" time="0.002"/>
-  <testcase name="testHouseOccupiedAndLightOn()" classname="RulesetThreeTest" time="0.003"/>
-  <testcase name="testDoorOpenWithHouseVacant()" classname="RulesetThreeTest" time="0.003"/>
+  <testcase name="testAwayTimerTriggeredWhenHouseVacant()" classname="RulesetThreeTest" time="0.002"/>
+  <testcase name="testHouseOccupiedAndLightOff()" classname="RulesetThreeTest" time="0.001"/>
+  <testcase name="testDoorClosedWithHouseOccupied()" classname="RulesetThreeTest" time="0.001"/>
+  <testcase name="testEdgeCaseExtremeTemperature()" classname="RulesetThreeTest" time="0.001"/>
+  <testcase name="testHouseOccupiedAndLightOn()" classname="RulesetThreeTest" time="0.001"/>
+  <testcase name="testDoorOpenWithHouseVacant()" classname="RulesetThreeTest" time="0.001"/>
   <system-out><![CDATA[Evaluating new state statically
 Evaluating new state statically
 Evaluating new state statically
