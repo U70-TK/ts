@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tartan.test.java.UT.RulesetSevenTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-02-13T14:24:09" hostname="WTKUAN" time="0.018">
+  <properties/>
+  <testcase name="testHouseOccupiedAndLightOff()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.001"/>
+  <testcase name="testDoorClosedWithHouseOccupied()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.002"/>
+  <testcase name="testEdgeCaseExtremeTemperature()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.002"/>
+  <testcase name="testHouseVacantAutoTimerTriggered()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.002"/>
+  <testcase name="testHouseOccupiedAndLightOn()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.002"/>
+  <testcase name="testDoorOpenWithHouseVacant()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.003"/>
+  <testcase name="testDoorClosedWithHouseVacant()" classname="tartan.test.java.UT.RulesetSevenTest" time="0.002"/>
+  <system-out><![CDATA[Evaluating new state statically
+Evaluating new state statically
+Evaluating new state statically
+Evaluating new state statically
+Evaluating new state statically
+Evaluating new state statically
+Evaluating new state statically
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
