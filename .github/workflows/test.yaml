@@ -17,6 +17,10 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Set up gradlew permission
+        working-directory: ./smart-home/Platform
+        run: chmod +wrx ./gradlew
+
       - name: Run tests with Gradle Wrapper
         working-directory: ./smart-home/Platform
         run: ./gradlew test

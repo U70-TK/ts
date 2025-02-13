@@ -18,6 +18,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Set up gradlew permission
+        working-directory: ./smart-home/Platform
+        run: chmod +wrx ./gradlew
+
       - name: Jacoco tests
         working-directory: ./smart-home/Platform
         run: ./gradlew jacocoTestReport
